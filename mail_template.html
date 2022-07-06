@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            .table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            #table_all tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+            .center {
+                display: grid;
+                place-items: center;
+            }
+            .red {
+                color: red;
+            }
+            .green {
+                color: green;
+            }
+            .mt-5{
+                margin-top: 40px;
+            }
+        </style>
+    </head>
+    <body>
+
+        {% if (data['dif_keys']) %}
+        <div class='center'>
+            <h2>ცვლილება</h2>
+            <table class="table" id="table_changes">
+            <tr>
+                <th>{{ data['headers'][0] }}</th>
+                <th>{{ data['headers'][1] }}</th>
+                <th>ცვლილება</th>
+            </tr>
+            {% for key in data['dif_keys'] %}
+                <tr>
+                <td>{{ key }}</td>
+                <td>{{ data['grades'][key] }} / 100</td>
+                {% if (data['deltas'][key] == 0) %}
+                    <td>-</td>
+                {% elif (data['deltas'][key] > 0)%}
+                    <td class="green">▲ {{ data['deltas'][key] }}</td>
+                {% else %}
+                    <td class="red">▼ {{ data['deltas'][key] }}</td>
+                {% endif%}
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+        {% endif%}
+
+        {% if (data['grades']) %}
+    
+        <div class='center mt-5'>
+            <h2>ყველა ქულა</h2>
+            <table class="table" id="table_all">
+            <tr>
+                <th>{{ data['headers'][0] }}</th>
+                <th>{{ data['headers'][1] }}</th>
+                <th>ცვლილება</th>
+            </tr>
+
+            {% for key in data['keys'] %}
+                <tr>
+                <td>{{ key }}</td>
+                <td>{{ data['grades'][key] }} / 100</td>
+                {% if (data['deltas'][key] == 0) %}
+                    <td>-</td>
+                {% elif (data['deltas'][key] > 0)%}
+                    <td class="green">▲ {{ data['deltas'][key] }}</td>
+                {% else %}
+                    <td class="red">▼ {{ data['deltas'][key] }}</td>
+                {% endif%}
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+    {% endif%}
+    </body>
+</html>
