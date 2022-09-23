@@ -27,7 +27,7 @@ def check():
     if PAUSE:
         log("Suspended")
         return 'Suspended'
-
+        
     response = {}
     html_text = get_html_text(get_response())
     if html_text:
@@ -45,6 +45,20 @@ def check():
 
     log("chage data" if response else "{}")
     return response
+
+
+@app.route('/pause')
+def pause():
+    with open('pause.txt', 'w') as f:
+        f.write('paused')
+    return ''
+
+
+@app.route('/resume')
+def resume():
+    with open('pause.txt', 'w') as f:
+        f.write('not paused')
+    return ''
 
 
 def run():
