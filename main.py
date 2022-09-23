@@ -21,6 +21,13 @@ def home():
 
 @app.route('/check')
 def check():
+    with open('pause.txt', 'r') as f:
+        PAUSE = f.read() == 'paused'
+        
+    if PAUSE:
+        log("Suspended")
+        return 'Suspended'
+
     response = {}
     html_text = get_html_text(get_response())
     if html_text:
