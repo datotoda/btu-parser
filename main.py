@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from flask import Flask
 
 from log import log, get_last_log
-from mailsender import send_email, send_wrong_cookie_email
-from parser import response_api, get_html_text, get_response
+from mailsender import send_email, send_wrong_cookie_email, send_message_email
+from parser import response_api, get_html_text, get_response, get_has_messages, get_messages
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ def home():
 @app.route('/check')
 def check():
     response = {}
+    messages = []
     html_text = get_html_text(get_response())
     if html_text:
         if 'ავტორიზაცია' in html_text:
@@ -32,9 +33,21 @@ def check():
             response = response_api(html_text)
         except Exception:
             return {}
+        
+        try:
+            if get_has_messages(html_text):
+                html_messages_text = get_html_text(get_response(messages=True))
+                messages = get_messages(html_messages_text) 
+        except Exception:
+            return {}
 
     if response:
         send_email(response)
+    
+    if messages:
+        response['messages'] = messages
+        for message in messages[::-1]:
+            send_message_email(**message)
 
     log("chage data" if response else "{}")
     return response
