@@ -21,6 +21,13 @@ def home():
 
 @app.route('/check')
 def check():
+    with open('pause.txt', 'r') as f:
+        PAUSE = f.read() == 'paused'
+        
+    if PAUSE:
+        log("Suspended")
+        return 'Suspended'
+        
     response = {}
     messages = []
     html_text = get_html_text(get_response())
@@ -51,6 +58,20 @@ def check():
 
     log("chage data" if response else "{}")
     return response
+
+
+@app.route('/pause')
+def pause():
+    with open('pause.txt', 'w') as f:
+        f.write('paused')
+    return ''
+
+
+@app.route('/resume')
+def resume():
+    with open('pause.txt', 'w') as f:
+        f.write('not paused')
+    return ''
 
 
 def run():

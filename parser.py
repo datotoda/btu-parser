@@ -44,8 +44,8 @@ def grid_json(result_html):
     grid = get_grid(result_html)
     return {
         'headers': grid[0][1:3],
-        'keys': [val[1] for val in grid[1:]],
-        'grades': {val[1]: to_num(val[2]) for val in grid[1:]}
+        'keys': [val[1] for val in grid[1:-1]],
+        'grades': {val[1]: to_num(val[2]) for val in grid[1:-1]}
     }
 
 
