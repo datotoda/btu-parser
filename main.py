@@ -5,7 +5,8 @@ from flask import Flask
 
 from log import log, get_last_log
 from mailsender import send_email, send_wrong_cookie_email, send_message_email
-from parser import response_api, get_html_text, get_response, get_has_messages, get_messages
+from html_parser import response_api, get_html_text, get_response, get_has_messages, get_messages
+from firebase import init, get_from_key, update_to_key
 
 load_dotenv()
 
@@ -21,8 +22,7 @@ def home():
 
 @app.route('/check')
 def check():
-    with open('pause.txt', 'r') as f:
-        PAUSE = f.read() == 'paused'
+    PAUSE = get_from_key(key='pause') == 'paused'
         
     if PAUSE:
         log("Suspended")
@@ -62,19 +62,18 @@ def check():
 
 @app.route('/pause')
 def pause():
-    with open('pause.txt', 'w') as f:
-        f.write('paused')
+    update_to_key(key='pause', value='paused')
     return ''
 
 
 @app.route('/resume')
 def resume():
-    with open('pause.txt', 'w') as f:
-        f.write('not paused')
+    update_to_key(key='pause', value='not paused')
     return ''
 
 
 def run():
+    init()
     app.run(host='0.0.0.0', port=8080)
 
 

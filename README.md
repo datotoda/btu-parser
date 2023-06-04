@@ -71,6 +71,15 @@ receiver_email=""
 cookie=""
 # Flask secret key
 flask_key=""
+
+# Firebase credentials
+project_id=""
+private_key_id=""
+private_key=""
+client_email=""
+client_id=""
+client_x509_cert_url=""
+databaseURL=""
 ```
 
 
