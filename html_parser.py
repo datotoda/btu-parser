@@ -1,6 +1,4 @@
-import json
 import os
-from os.path import exists
 
 import requests
 from bs4 import BeautifulSoup
@@ -11,7 +9,6 @@ from firebase import get_from_key, update_to_key, get_from_history, update_to_hi
 
 load_dotenv()
 
-DB_JSON = 'parser_db.json'
 KEY_LAST_KEY = 'last_json_key'
 
 URL = 'https://classroom.btu.edu.ge/ge/student/me/courses'
@@ -56,8 +53,7 @@ def get_db_json():
 def set_db_json(key, value):
     j = get_db_json()
     j[key] = value
-    with open(DB_JSON, 'w') as file:
-        json.dump(j, file, indent=4)
+    update_to_key(key='parser_db', value=j)
 
 
 def get_filename(datetime):
@@ -91,10 +87,10 @@ def get_response(messages=False):
 def response_api(html_text):
     new_json = grid_json(html_text)
     old_json = get_json_from_history(get_db_json()[KEY_LAST_KEY])
-
+    
     if old_json == new_json:
         return {}
-
+    
     new_filename = get_today_filename()
     save_json(new_json, new_filename)
     set_db_json(KEY_LAST_KEY, new_filename)

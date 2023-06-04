@@ -1,5 +1,4 @@
 from datetime import datetime
-from os.path import exists
 from firebase import update_to_log, get_from_key
 
 import pytz
@@ -21,17 +20,18 @@ def get_log_time():
 
 
 def get_new_log_key():
-    return datetime.timestamp(now())
+    return int(datetime.timestamp(now()))
 
 
 def log(message):
-    update_to_log(key=get_new_log_key(), value=f'[{get_log_time()}] {message}\n')
+    update_to_log(key=f'{get_new_log_key()}', value=f'[{get_log_time()}] {message}')
 
 
 def get_last_log():
     logs = get_from_key('log')
+    print(logs)
     if logs:
-        logs = sorted(logs.items(), lambda x: x[0])
+        logs = sorted(logs.items(), key=lambda x: int(x[0]))
         logs = [i[1] for i in logs][-50:]
         return '<br>'.join(logs)
     return ''

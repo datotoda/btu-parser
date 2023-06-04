@@ -5,8 +5,8 @@ from flask import Flask
 
 from log import log, get_last_log
 from mailsender import send_email, send_wrong_cookie_email, send_message_email
-from parser import response_api, get_html_text, get_response, get_has_messages, get_messages
-from firebase import get_from_key, update_to_key
+from html_parser import response_api, get_html_text, get_response, get_has_messages, get_messages
+from firebase import init, get_from_key, update_to_key
 
 load_dotenv()
 
@@ -73,6 +73,7 @@ def resume():
 
 
 def run():
+    init()
     app.run(host='0.0.0.0', port=8080)
 
 

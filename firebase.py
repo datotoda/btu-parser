@@ -3,6 +3,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from datetime import datetime
+import pytz
 
 from dotenv import load_dotenv
 
@@ -37,6 +38,14 @@ firebase_admin.initialize_app(cred, {
 
 REF = db.reference('py/')
 
+def update_to_key(key, value):
+    REF.update({key: value})
+
+def get_from_key(key):
+    result = REF.get()
+    if result:
+        result = REF.get().get(key, None)
+    return result
 
 def update_to_history(key, value):
     history = REF.child('history')
@@ -44,33 +53,38 @@ def update_to_history(key, value):
 
 def get_from_history(key):
     history = REF.child('history')
-    return history.get().get(key, None)
+    result = history.get()
+    if result:
+        result = result.get(key, None)
+    return result
 
 def update_to_log(key, value):
-    history = REF.child('log')
-    history.update({key: value})
+    log = REF.child('log')
+    log.update({key: value})
 
 def get_from_log(key):
-    history = REF.child('log')
-    return history.get().get(key, None)
+    log = REF.child('log')
+    result = log.get()
+    if result:
+        result = result.get(key, None)
+    return result
 
 def update_to_parser_db(key, value):
-    history = REF.child('parser_db')
-    history.update({key: value})
+    parser_db = REF.child('parser_db')
+    parser_db.update({key: value})
 
 def get_from_parser_db(key):
-    history = REF.child('parser_db')
-    return history.get().get(key, None)
-
-def update_to_key(key, value):
-    REF.update({key: value})
-
-def get_from_key(key):
-    return REF.get().get(key, None)
+    parser_db = REF.child('parser_db')
+    result = parser_db.get()
+    if result:
+        result = result.get(key, None)
+    return result
 
 
 def init():
+    now = datetime.now(pytz.timezone('Asia/Tbilisi'))
     update_to_history(key='initial', value={})
-    update_to_log(key=f'{int(datetime.timestamp(datetime.now()))}', value='start server (firebase_admin init)')
-    update_to_parser_db(key='last_json_key', value='initial')
+    update_to_log(key=f'{int(datetime.timestamp(now))}', value=f'[{now.strftime("%m/%d/%Y, %H:%M:%S")}] start server (firebase_admin init)')
+    if not get_from_parser_db(key='last_json_key'):
+        update_to_parser_db(key='last_json_key', value='initial')
     update_to_key(key='pause', value='not paused')
