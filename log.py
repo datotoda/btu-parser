@@ -29,7 +29,6 @@ def log(message):
 
 def get_last_log():
     logs = get_from_key('log')
-    print(logs)
     if logs:
         logs = sorted(logs.items(), key=lambda x: int(x[0]))
         logs = [i[1] for i in logs][-50:]
